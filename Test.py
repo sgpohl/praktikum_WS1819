@@ -11,10 +11,10 @@ izhikevich_c = -65
 izhikevich_d = 8
 
 #izhikevich_threshold = 30-izhikevich_c
-izhikevich_threshold = -izhikevich_c
+izhikevich_threshold = -izhikevich_c*0.6
 
 connectivity = 0.3
-neuron_count = 20
+neuron_count = 50
 
 class Neuron:
 	def __init__(self):
@@ -49,8 +49,8 @@ class Neuron:
 		self.c = self.c + value*0.1
 		return izhikevich_threshold - self.c
 
-synapse_tRelax = 100
-synapse_Utilisation = 0.4
+synapse_tRelax = 500
+synapse_Utilisation = 0.6
 		
 class Synapse:
 	def __init__(self):
@@ -71,6 +71,7 @@ class Synapse:
 		#effect
 		E = (1-self.I)*synapse_Utilisation
 		self.I = self.I + E
+		print(E)
 		return self.w*E
 		
 	def ms_step(self):
@@ -130,8 +131,20 @@ def initComplete():
 			net.add_edge(source, target, object=Synapse())
 	return net
 
+def insertInhibition(net, percentage):
+	counter = 0
+	edges = [s for (_,_,s) in (net.edges.data('object'))]
+	np.random.shuffle(edges)
+	for synapse in edges:# net.out_edges(data=True):
+		counter = counter-percentage
+		if(counter < 0):
+			counter = counter+1
+			synapse.w = -5*synapse.w
+	return net
+	
 #net = initComplete()
 net = initPartial()
+net = insertInhibition(net, 0.2)
 
 spikes = []
 voltage = []
@@ -143,8 +156,8 @@ for neuron in net.nodes:
 	
 axons = [SpikeDelay(np.random.randint(5,15), False) for _ in net.nodes]
 
-training = 00000
-steps = 70000
+training = 40000
+steps = 30000
 
 time = 0
 for t in range(training):
@@ -159,6 +172,7 @@ for t in range(training):
 				ca = edge[1].input(synapse.effect(time+t))
 				synapse.learn(ca)
 time = time+training
+print('training done')
 
 for t in range(steps):
 	#pulse = 5 - (t/10000)
@@ -180,6 +194,7 @@ for t in range(steps):
 				synapse = edge[2]['object']
 				ca = edge[1].input(synapse.effect(time+t))
 				synapse.learn(ca)
+				#print(synapse.w, ca)
 		voltage[idxNeuron].append(neuron.v)
 		calcium[idxNeuron].append(neuron.c)
 #print (spikes)
@@ -204,8 +219,8 @@ plt.xlabel('Neuron')
 plt.ylabel('v')
 for idx in range(neuron_count):
 	plt.eventplot(spikes, linelengths = [0.5 for n in net.nodes])    
-	axs[idx].plot(np.arange(2*steps)/2, voltage[idx], 'xkcd:blue')
-	axs[idx].plot(np.arange(steps), calcium[idx], 'xkcd:stone')
+	axs[idx].plot(np.arange(2*steps)/2, voltage[idx], 'xkcd:stone')
+	axs[idx].plot(np.arange(steps), calcium[idx], 'xkcd:blue')
 	axs[idx].eventplot(spikes[idx], linelengths=[150], colors=['xkcd:red'])
 	axs[idx].set_ylim(-100,100)
 plt.show()

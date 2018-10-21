@@ -14,7 +14,11 @@ izhikevich_d = 8
 izhikevich_threshold = -izhikevich_c*0.6
 
 connectivity = 0.3
-neuron_count = 50
+neuron_count = 20
+
+global_reservoir = 1
+
+np.random.seed()
 
 class Neuron:
 	def __init__(self):
@@ -71,7 +75,7 @@ class Synapse:
 		#effect
 		E = (1-self.I)*synapse_Utilisation
 		self.I = self.I + E
-		print(E)
+		#print(E)
 		return self.w*E
 		
 	def ms_step(self):
@@ -142,22 +146,44 @@ def insertInhibition(net, percentage):
 			synapse.w = -5*synapse.w
 	return net
 	
+def insertInhibitionNeurons(net, percentage):
+	counter = 1-percentage
+	neurons = list(net.nodes)
+	np.random.shuffle(neurons)
+	inhibitory_neurons = []
+	for idx, neuron in enumerate(neurons):
+		counter = counter-percentage
+		if(counter < 0):
+			print('inhibitory neuron', idx)
+			inhibitory_neurons.append(idx)
+			counter = counter+1
+			for edge in net.out_edges(neuron, data=True):
+				synapse = edge[2]['object']
+				synapse.w = -5*synapse.w
+	return net,inhibitory_neurons
+	
+	
+ 
 #net = initComplete()
 net = initPartial()
-net = insertInhibition(net, 0.2)
+#net = insertInhibition(net, 0.4)
+net,inhibitory_neurons = insertInhibitionNeurons(net, 0.2)
 
 spikes = []
 voltage = []
 calcium = []
+reservoir = []
 for neuron in net.nodes:
 	spikes.append([])
 	voltage.append([])
 	calcium.append([])
 	
 axons = [SpikeDelay(np.random.randint(5,15), False) for _ in net.nodes]
+constant_input = SpikeDelay(100, False)
+constant_input.set(True)
 
-training = 40000
-steps = 30000
+training = 0000
+steps = 300000
 
 time = 0
 for t in range(training):
@@ -178,8 +204,12 @@ for t in range(steps):
 	#pulse = 5 - (t/10000)
 	#if(pulse > 0):
 	#	list(net)[0].input(pulse)
-	list(net)[0].input(5)
+	constant_input.set(False)
+	if(constant_input.current()):
+		list(net)[0].input(50)
+		constant_input.set(True)
 	
+	total_synaptic_flux = 0
 	for idxNeuron, neuron in enumerate(net.nodes):
 		voltage[idxNeuron].append(neuron.v)
 		
@@ -188,17 +218,28 @@ for t in range(steps):
 		axons[idxNeuron].set(spiked)
 		if (spiked):
 			spikes[idxNeuron].append(t)
-			
+		
 		if (transmission):
 			for edge in net.out_edges(neuron, data=True):
 				synapse = edge[2]['object']
-				ca = edge[1].input(synapse.effect(time+t))
+				
+				synaptic_flux = synapse.effect(time+t)
+				if(synaptic_flux > 0):
+					synaptic_flux = synaptic_flux*global_reservoir
+					total_synaptic_flux = total_synaptic_flux + synaptic_flux
+				ca = edge[1].input(synaptic_flux)
 				synapse.learn(ca)
 				#print(synapse.w, ca)
+				
 		voltage[idxNeuron].append(neuron.v)
 		calcium[idxNeuron].append(neuron.c)
+	global_reservoir = global_reservoir + (1-global_reservoir)*0.001 - global_reservoir*total_synaptic_flux/1000
+	if((t % 1000)==0):
+		print(t, 'global', global_reservoir)
+	reservoir.append(global_reservoir)
 #print (spikes)
 print('calc done')
+#print('Cycles: ', len(list(nx.simple_cycles(net))))
 
 #plt.figure(1)
 #plt.title('Topology plot')
@@ -210,7 +251,7 @@ print('calc done')
 #plt.xlabel('Neuron')
 #plt.ylabel('Spike')
 
-fig, axs = plt.subplots(len(voltage), 1, sharex=True)
+fig, axs = plt.subplots(len(voltage)+1, 1, sharex=True)
 # Remove horizontal space between axes
 fig.subplots_adjust(hspace=0)
 
@@ -218,9 +259,19 @@ plt.title('Membrane potential plot')
 plt.xlabel('Neuron')
 plt.ylabel('v')
 for idx in range(neuron_count):
-	plt.eventplot(spikes, linelengths = [0.5 for n in net.nodes])    
+	#plt.eventplot(spikes, linelengths = [0.5 for n in net.nodes])    
 	axs[idx].plot(np.arange(2*steps)/2, voltage[idx], 'xkcd:stone')
 	axs[idx].plot(np.arange(steps), calcium[idx], 'xkcd:blue')
-	axs[idx].eventplot(spikes[idx], linelengths=[150], colors=['xkcd:red'])
+	if(idx in inhibitory_neurons):
+		color = 'xkcd:red'
+	else:
+		color = 'xkcd:green'
+	axs[idx].eventplot(spikes[idx], linelengths=[150], colors=[color])
+		
 	axs[idx].set_ylim(-100,100)
+
+axs[neuron_count].plot(np.arange(steps), reservoir, 'xkcd:blue')
+axs[neuron_count].set_ylim(-0.1,1.1)
+
 plt.show()
+

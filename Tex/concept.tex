@@ -1,0 +1,42 @@
+%
+% LaTeX report template 
+%
+\documentclass[a4paper,10pt]{article}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[list=true, font=large, labelfont=bf, 
+labelformat=brace, position=top]{subcaption}
+%
+
+
+\begin{document}
+%
+   \title{Implicit hierarchy through autonomous neural dynamics}
+
+   \author{Steffen Pohl \\ e-mail: steffen.pohl@student.uni-tuebingen.de}
+          
+   \date{}
+
+   \maketitle
+   
+   \tableofcontents
+ 
+%  \newpage
+
+\section{Biological Foundation}
+
+\section{The dHAN architecture}
+The dense homogeneous associative network (dHAN) is based on an undirected weighted graph, where every edge represents a weak excitatory link between neurons. Neurons without excitatory connection are suppressing each other via strong inhibition. This results in a dynamical system, where every clique defines a stable attractor. To every node of this WTA network a 'reservoir' variable is introduced; the efferent strength of every neuron is modulated by this reservoir. By depleting the reservoir, when the node is active, and regenerating it, when inactive, the former stable attractors turn into transient attractors of the system.
+
+\begin{figure}[ht!]
+	\includegraphics[width=\textwidth]{dhanDynamic.png}
+	%\includegraphics[width=\textwidth]{dhanGraph.png}
+	%\caption{Left: example graph used as dHAN. Right: Cliques and possible transitions of the graph.}
+\end{figure}
+
+\bibliographystyle{plainnat}
+\bibliography{\jobname} 
+
+\end{document}
+

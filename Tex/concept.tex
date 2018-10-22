@@ -7,6 +7,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage[list=true, font=large, labelfont=bf, 
 labelformat=brace, position=top]{subcaption}
+\usepackage{natbib}
 %
 
 
@@ -37,45 +38,56 @@ TLDR; \\
 
 Two classes of receptors are known: Ionotropic and metabotropic receptors. Metabotropic receptors have long lasting effects on the postsynaptic terminal (seconds to minutes), but usually do not alter the membrane potential strongly, but modulate the effectiveness of other (ionotropic) channels. Ionotropic receptors are fast (order of milliseconds) channels into the efferent cell, leading to either a depolarisation (i.e. excitation) or hyperpolarisation (i.e. inhibition). The three most prominent ionotropic-type receptors are AMPA, NMDA and GABA channels.\\
 
-\noindent AMPA receptors are fast excitatory channels into the postsynaptic terminal, that are selective for a single cation. Their effect lasts only a few milliseconds. In contrast NMDA receptors are non selective cation channels, with an effect length of multiple hundreds of milliseconds. Interestingly NMDA receptors are inactive at negative intracellular potentials, i.e at resting potential. Thus for NMDA receptors to work, the efferent cell must have been previously excited via AMPA receptors. GABA receptors are strong inhibitory channels with a resting potential of -70mV, possibly pushing the membrane potential below resting potential upon activation.
+\noindent AMPA receptors are fast excitatory channels into the postsynaptic terminal, that are selective for a single cation. Their effect lasts only a few milliseconds and with a reversal potential of 0 mV they are not able to induce a spike on their own. In contrast NMDA receptors are non selective cation channels, with an effect length of multiple hundreds of milliseconds. Interestingly NMDA receptors are inactive at negative intracellular potentials, i.e at resting potential. Thus for NMDA receptors to work, the efferent cell must have been previously excited via AMPA receptors. GABA receptors are strong inhibitory channels with a reversal potential of -70mV, possibly pushing the membrane potential below resting potential upon activation. \citep{luscher2012nmda}
 
-It is noteworthy that receptor types are specific for the afferent neuron, i.e. a neurons outgoing synaptic terminals are all of the same type.
+%AMPA  
+
+It is noteworthy that neurotransmitters are specific for the every neuron, i.e. a neurons are either excitatory or inhibitory.
 
 \subsection{Calcium}
-Three pathways are known for $Ca^{2+}$ ions to enter the  postsynaptic terminal: Most prominently (~70\% of flux) are voltage-gated calcium channels (VGCCs), which open when the cell is depolarized, i.e. is firing. The second path is via opened NMDA receptors (max. 30\%). The last possibility is through $Ca^{2+}$ specific AMPA receptors, explaining less than 5 percent of the calcium influx.
+Three pathways are known for Ca$^{2+}$ ions to enter the  postsynaptic terminal: Most prominently (~70\% of flux) are voltage-gated calcium channels (VGCCs), which open when the cell is depolarized, i.e. is firing. The second path is via opened NMDA receptors (max. 30\%). The last possibility is through Ca$^{2+}$ specific AMPA receptors, explaining less than 5 percent of the calcium influx. Thus Calcium can enter the cell under three conditions: The cell is either spiking (VGCC), has had multiple incoming spikes recently (NMDA), or out of structural reasons (AMPA).
 
 \subsubsection{Long Term Potentiation and Depression}
+A heightened Calcium concentration at the postsynaptic terminal results in the activation of CaMKII. This complex is both enhancing existing exctitatory receptors and causing the creation of new ones. The growth of the dentritic tree is also induced by high concentration of activated CaMKII, possibly resulting in growth of new connections.
 
-
-Activated CaMKII after LTP reverts after about 1 minute to an inactive state. 
-Autophosphorylation is mostly induced by high frequency stimulation.
-%\cite{camk2}
+Activated CaMKII after LTP usually reverts after about 1 minute to an inactive state, but may enter a permanently active state, if the Ca$^2+$ concentration has been high for a long period. This is mostly induced by high frequency stimulation, leading to Long Term Potentiation (LTP). In contrast, if the Ca$2+$ influx is small and rare but existent, as with low frequency stimulation, the very same ion induces the dephosphorylation of CaMKII, i.e. the reversal of the permanently active complexes into inactive ones. This leads to Long Term Depression (LTD), the lasting weakening of the synapse. \citep{luscher2012nmda}\citep{coultrap2012camkii}
 
 \subsubsection{Excitotoxicity}
-%\cite{excitotoxicity}
+\citep{manev1989excitotoxicity}
 
 \subsection{Synaptic homeostasis}
 %\cite{tononi_homeostasis}
 \subsubsection{Synaptic scaling}
-Regularization of all afferent synaptic strengths to maintain a stable synaptic influx. Ca low -> strengthen, Ca high -> weaken
-%\cite{synaptic_homeostasis}
+Regularization of all afferent synaptic strengths to maintain a stable synaptic influx. Ca low: strengthen, Ca high: weaken
+\citep{turrigiano2012homeostatic}
 
-
+\newpage
 \section{Computational Models}
 
 \subsection{The dHAN architecture}
-The dense homogeneous associative network (dHAN) is based on an undirected weighted graph, where every edge represents a weak excitatory link between neurons. Neurons without excitatory connection are suppressing each other via strong inhibition. This results in a dynamical system, where every clique defines a stable attractor. To every node of this multi-WTA network a 'reservoir' variable is introduced; the efferent strength of every neuron is modulated by this reservoir. By depleting the reservoir, when the node is active, and regenerating it, when inactive, the former stable attractors turn into transient attractors of the system. %\cite{gros_dhan}
-
 \begin{figure}[ht!]
 	\includegraphics[width=\textwidth]{dhanDynamic.png}
 	%\includegraphics[width=\textwidth]{dhanGraph.png}
 	%\caption{Left: example graph used as dHAN. Right: Cliques and possible transitions of the graph.}
 \end{figure}
+The dense homogeneous associative network (dHAN) is based on an undirected weighted graph, where every edge represents a weak excitatory link between neurons. Neurons without excitatory connection are suppressing each other via strong inhibition. This results in a dynamical system, where every clique defines a stable attractor. To every node of this multi-WTA network a 'reservoir' variable is introduced; the efferent strength of every neuron is modulated by this reservoir. By depleting the reservoir, when the node is active, and regenerating it, when inactive, the former stable attractors turn into transient attractors of the system. %\cite{gros_dhan}
 
-%\cite{gros_learning}
 
-%\bibliographystyle{plainnat}
-%\bibliography{\jobname} 
+\citep{gros2009semanticLearning}
+
+\subsection{Clique encoding via spikes}
+\begin{figure}[ht!]
+	\label{fig:ERM}
+	\centering
+	\includegraphics[width=0.7\textwidth]{ERM.png}
+	%\includegraphics[width=\textwidth]{dhanGraph.png}
+	\caption{The ERM architecture as stated by \cite{vasa2010spiking}}
+\end{figure}
+\cite{vasa2010spiking} expanded on this idea to spiking networks and used it for sequence generation of an a priori unknown domain. They divided the task into three parts: An encoding network, consisting of several small fixed point attractor networks bidirectionally connected to a single recurrent layer receiving the input. Patterns in the input are learned via a Hopfield-Network-like Hebbian learning. The attractors are mapped one-to-one as input to reservoirs similar to the dHAN. The reservoirs then act as generators for the sequences. To control the length of a transient signal, the selfinhibition of the reservoirs are additionally modulated externally (Fig. \ref{fig:ERM}).
+
+
+\bibliographystyle{plainnat}
+\bibliography{concept} 
 
 \end{document}
 

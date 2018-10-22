@@ -12,7 +12,8 @@ labelformat=brace, position=top]{subcaption}
 
 \begin{document}
 %
-   \title{Implicit hierarchy through autonomous neural dynamics}
+%   \title{Implicit hierarchy through autonomous neural dynamics}
+   \title{Polyhomeostatic learning of autonomous spiking networks}
 
    \author{Steffen Pohl \\ e-mail: steffen.pohl@student.uni-tuebingen.de}
           
@@ -24,10 +25,46 @@ labelformat=brace, position=top]{subcaption}
  
 %  \newpage
 
-\section{Biological Foundation}
+\section{Neurobiology}
 
-\section{The dHAN architecture}
-The dense homogeneous associative network (dHAN) is based on an undirected weighted graph, where every edge represents a weak excitatory link between neurons. Neurons without excitatory connection are suppressing each other via strong inhibition. This results in a dynamical system, where every clique defines a stable attractor. To every node of this WTA network a 'reservoir' variable is introduced; the efferent strength of every neuron is modulated by this reservoir. By depleting the reservoir, when the node is active, and regenerating it, when inactive, the former stable attractors turn into transient attractors of the system.
+%Ionotropic receptors.
+%Metabotropic receptors
+
+\subsection{Synaptic Receptors}
+TLDR; \\
+\noindent ionotropic: signal, metabotropic: modulation. \\
+\noindent AMPA: fast +, NMDA slow +, GABA -\\
+
+Two classes of receptors are known: Ionotropic and metabotropic receptors. Metabotropic receptors have long lasting effects on the postsynaptic terminal (seconds to minutes), but usually do not alter the membrane potential strongly, but modulate the effectiveness of other (ionotropic) channels. Ionotropic receptors are fast (order of milliseconds) channels into the efferent cell, leading to either a depolarisation (i.e. excitation) or hyperpolarisation (i.e. inhibition). The three most prominent ionotropic-type receptors are AMPA, NMDA and GABA channels.\\
+
+\noindent AMPA receptors are fast excitatory channels into the postsynaptic terminal, that are selective for a single cation. Their effect lasts only a few milliseconds. In contrast NMDA receptors are non selective cation channels, with an effect length of multiple hundreds of milliseconds. Interestingly NMDA receptors are inactive at negative intracellular potentials, i.e at resting potential. Thus for NMDA receptors to work, the efferent cell must have been previously excited via AMPA receptors. GABA receptors are strong inhibitory channels with a resting potential of -70mV, possibly pushing the membrane potential below resting potential upon activation.
+
+It is noteworthy that receptor types are specific for the afferent neuron, i.e. a neurons outgoing synaptic terminals are all of the same type.
+
+\subsection{Calcium}
+Three pathways are known for $Ca^{2+}$ ions to enter the  postsynaptic terminal: Most prominently (~70\% of flux) are voltage-gated calcium channels (VGCCs), which open when the cell is depolarized, i.e. is firing. The second path is via opened NMDA receptors (max. 30\%). The last possibility is through $Ca^{2+}$ specific AMPA receptors, explaining less than 5 percent of the calcium influx.
+
+\subsubsection{Long Term Potentiation and Depression}
+
+
+Activated CaMKII after LTP reverts after about 1 minute to an inactive state. 
+Autophosphorylation is mostly induced by high frequency stimulation.
+%\cite{camk2}
+
+\subsubsection{Excitotoxicity}
+%\cite{excitotoxicity}
+
+\subsection{Synaptic homeostasis}
+%\cite{tononi_homeostasis}
+\subsubsection{Synaptic scaling}
+Regularization of all afferent synaptic strengths to maintain a stable synaptic influx. Ca low -> strengthen, Ca high -> weaken
+%\cite{synaptic_homeostasis}
+
+
+\section{Computational Models}
+
+\subsection{The dHAN architecture}
+The dense homogeneous associative network (dHAN) is based on an undirected weighted graph, where every edge represents a weak excitatory link between neurons. Neurons without excitatory connection are suppressing each other via strong inhibition. This results in a dynamical system, where every clique defines a stable attractor. To every node of this multi-WTA network a 'reservoir' variable is introduced; the efferent strength of every neuron is modulated by this reservoir. By depleting the reservoir, when the node is active, and regenerating it, when inactive, the former stable attractors turn into transient attractors of the system. %\cite{gros_dhan}
 
 \begin{figure}[ht!]
 	\includegraphics[width=\textwidth]{dhanDynamic.png}
@@ -35,8 +72,10 @@ The dense homogeneous associative network (dHAN) is based on an undirected weigh
 	%\caption{Left: example graph used as dHAN. Right: Cliques and possible transitions of the graph.}
 \end{figure}
 
-\bibliographystyle{plainnat}
-\bibliography{\jobname} 
+%\cite{gros_learning}
+
+%\bibliographystyle{plainnat}
+%\bibliography{\jobname} 
 
 \end{document}
 

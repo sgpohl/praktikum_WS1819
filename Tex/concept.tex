@@ -83,7 +83,7 @@ The dense homogeneous associative network (dHAN) is based on an undirected weigh
 	%\includegraphics[width=\textwidth]{dhanGraph.png}
 	\caption{The ERM architecture as stated by \cite{vasa2010spiking}}
 \end{figure}
-\cite{vasa2010spiking} expanded on this idea to spiking networks and used it for sequence generation of an a priori unknown domain. They divided the task into three parts: An encoding network, consisting of several small fixed point attractor networks bidirectionally connected to a single recurrent layer receiving the input. Patterns in the input are learned via a Hopfield-Network-like Hebbian learning. The attractors are mapped one-to-one as input to reservoirs similar to the dHAN. The reservoirs then act as generators for the sequences. To control the length of a transient signal, the selfinhibition of the reservoirs are additionally modulated externally (Fig. \ref{fig:ERM}).
+\cite{vasa2010spiking} expanded on this idea to spiking networks and used it for sequence generation of an a priori unknown domain. They divided the task into three parts: An encoding network, consisting of several small fixed point attractor networks bidirectionally connected to a single recurrent layer receiving the input. Patterns in the input are learned via a Hopfield-Network-like Hebbian learning. The attractors are mapped as input to reservoirs similar to the dHAN. The reservoirs then act as generators for the sequences. To control the length of a transient signal, the selfinhibition of the reservoirs are additionally modulated externally (Fig. \ref{fig:ERM}).
 
 
 \bibliographystyle{plainnat}
